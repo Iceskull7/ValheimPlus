@@ -8,6 +8,23 @@ compatible; see the [release archive](https://github.com/Grantapher/ValheimPlus/
 for those notes.
 
 
+## 0.10.3.1 - Moose Procreation and Windmill Oats (Iceskull7 fork)
+
+* Add `Moose` to the existing Procreation selection, including calf growth information
+  and the existing maturity modifier. Preserve original animal bits and Tameable settings.
+* Retain windmill input/output lookup through the game's conversion table for barley,
+  oats and other registered inputs. Clarify the shared queue capacity and input order
+  in configuration descriptions.
+* Fix windmill output duplication when a nearly full chest accepts only part of a stack:
+  synchronize each changed chest and drop only the remainder. Keep the normal fallback
+  for full or missing chests.
+* Add 3,143 managed regression assertions for animal selection and chest distribution.
+* Target Valheim 1.0.20 (n-41), BepInExPack_Valheim 5.4.2351. Server and clients must
+  update together; existing configs can be reused. See [installation](INSTALL.md#iceskull7-fork-01031)
+  and [verification limitations](docs/moose-oats-verification.md). No in-game or
+  multiplayer test is claimed.
+
+
 ## 0.10.3.0 - Valheim 1.0.20 Compatibility
 
 _Released 2026-10-15_

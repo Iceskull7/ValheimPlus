@@ -4,6 +4,12 @@
 
 # ValheimPlus
 
+This is the Iceskull7 fork. Version **0.10.3.1** adds moose to Procreation and fixes
+partial windmill deposits for recipe-driven barley/oat automation. Download this
+fork's packages from [GitHub Releases](https://github.com/Iceskull7/ValheimPlus/releases/latest)
+and follow the [fork installation instructions](INSTALL.md#iceskull7-fork-01031).
+See [verification and remaining game checks](docs/moose-oats-verification.md).
+
 A HarmonyX Mod aimed at improving the gameplay quality of Valheim. The mod includes several different main features that allow users to modify the stats of players, buildings and entities. V+ also offers players the ability to build and place objects with very high precision through a sophisticated system, as well as tweaking and modifying already placed objects with equal precision. The goal is to provide V+ as a base modification for Valheim to increase quality of life, tweak the game's difficulty, and in general, improve the player's experience. V+ also comes with a version and configuration control system for servers and users, enabling server owners to ensure that only players with the same configuration are able to join the server.
 
 ### All features can be enabled and tweaked through the V+ config file.

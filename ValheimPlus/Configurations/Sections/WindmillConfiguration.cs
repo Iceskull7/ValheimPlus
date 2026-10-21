@@ -27,15 +27,15 @@ namespace ValheimPlus.Configurations.Sections
             BindEnabled(config, Section, false,
                 "Change false to true to enable this section.");
             maximumBarleyEntry = Bind(config, Section, "maximumBarley", 50,
-                "Maximum amount of barley in a windmill.");
+                "Maximum number of queued inputs, shared by barley and oats. The legacy key name is retained for existing configs.");
             productionSpeedEntry = Bind(config, Section, "productionSpeed", 10f,
-                "The time it takes for the windmill to produce a single ingot in seconds.");
+                "The time it takes for the windmill to process one input in seconds.");
             ignoreWindIntensityEntry = Bind(config, Section, "ignoreWindIntensity", false,
-                "Ignore wind intensity so it always takes the production speed value to process one barley.");
+                "Ignore wind intensity so it always takes the production speed value to process one input.");
             autoDepositEntry = Bind(config, Section, "autoDeposit", false,
-                "Instead of dropping the items, they will be placed inside the nearest nearby chests.");
+                "Place each input's actual conversion output in nearby chests, preferring existing stacks. Any remainder drops normally.");
             autoFuelEntry = Bind(config, Section, "autoFuel", false,
-                "The Windmill will pull barley from nearby chests to be automatically added to it when its empty.");
+                "Fill free windmill slots from nearby chests using the game's conversions, including barley and oats.\nChecks nearest chests first, then inputs in the game's conversion order; missing inputs do not block other inputs.");
             ignorePrivateAreaCheckEntry = Bind(config, Section, "ignorePrivateAreaCheck", true,
                 "This option prevents the Windmill to pull items from warded areas if it isn't placed inside of it.\nFor convenience, we recommend this to be set to true.");
             autoRangeEntry = Bind(config, Section, "autoRange", 10f, 1f, 50f,

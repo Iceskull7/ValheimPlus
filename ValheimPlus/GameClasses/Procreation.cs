@@ -13,9 +13,8 @@ namespace ValheimPlus.GameClasses
     {
         public static bool IsValidAnimalType(string name)
         {
-            if (!TameableHelpers.NamedTypes.TryGetValue(name, out var type)) return false;
             var config = Configuration.Current.Procreation;
-            return config.animalTypes.HasFlag(type);
+            return ProcreationAnimals.IsSelected(config.IsEnabled, config.animalTypes, name);
         }
 
         public static bool IsHungerIgnored(Tameable instance)

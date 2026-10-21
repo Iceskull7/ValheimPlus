@@ -1867,7 +1867,7 @@
 				"defaultValue": "false"
 			},
 			"animalTypes": {
-				"description": "A comma-separated list of animals that can breed. Valid types are: boar, wolf, lox, asksvin, all, none",
+				"description": "A comma-separated list of animals whose breeding settings are changed. Valid types are: boar, hen, wolf, lox, asksvin, moose, all, none",
 				"defaultValue": "all",
 				"defaultType": "string"
 			},
@@ -2649,13 +2649,13 @@
 				"defaultValue": "false"
 			},
 			"maximumBarley": {
-				"description": "Maximum amount of barley in a windmill.",
-				"defaultValue": "40",
+				"description": "Maximum number of queued inputs, shared by barley and oats. The legacy key name is retained for existing configs.",
+				"defaultValue": "50",
 				"defaultType": "int"
 			},
 			"productionSpeed": {
-				"description": "The time it takes for the windmill to produce barley floor",
-				"defaultValue": "30",
+				"description": "The time it takes for the windmill to process one input in seconds.",
+				"defaultValue": "10",
 				"defaultType": "float"
 			},
 			"autoDeposit": {
@@ -2664,7 +2664,7 @@
 				"defaultType": "bool"
 			},
 			"autoFuel": {
-				"description": "Look for barley inside nearby chests",
+				"description": "Fill free windmill slots from nearby chests using the game's conversions, including barley and oats. Checks nearest chests first, then inputs in the game's conversion order; missing inputs do not block other inputs.",
 				"defaultValue": "false",
 				"defaultType": "bool"
 			},

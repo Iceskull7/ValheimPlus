@@ -1,5 +1,39 @@
 # Installation Instructions
 
+## Iceskull7 fork 0.10.3.1
+
+Download this fork from [Iceskull7/ValheimPlus releases](https://github.com/Iceskull7/ValheimPlus/releases/latest).
+The upstream mod-manager entries below do not install this fork's changes.
+
+Target versions: Valheim **1.0.20 (n-41)** and BepInExPack_Valheim **5.4.2351**
+(BepInEx **5.4.23.5**). Update the **dedicated server and all clients** to this same
+ValheimPlus version; the minimum compatible mod version is also 0.10.3.1.
+
+1. Stop the server/game and back up the world and `BepInEx/config`.
+2. With the required BepInEx already installed, extract `ValheimPlus-0.10.3.1.zip`
+   into the server/game root. It installs `BepInEx/plugins/ValheimPlus.dll`.
+   Remove any older renamed ValheimPlus DLL so only one copy remains.
+3. For a new BepInEx install, use `WindowsServer.zip`, `WindowsClient.zip`,
+   `UnixServer.zip`, or `UnixClient.zip` instead. These include the pinned loader.
+   On Linux, preserve your server launch arguments and use the BepInEx start script
+   (`chmod +x start_server_bepinex.sh`); for clients configure the supplied
+   `start_game_bepinex.sh` as described in the BepInExPack instructions.
+4. Keep `BepInEx/config/org.bepinex.plugins.valheim_plus.cfg`. No replacement V+
+   config is bundled; missing settings and current descriptions are generated on
+   startup. Legacy `valheim_plus.cfg` migration remains supported.
+5. Enable `[Procreation]` and include `Moose` in `animalTypes`, or use `All`.
+   Original explicit lists and numeric `31` continue to select only the original
+   animals. `[Tameable]` settings are unchanged.
+6. Enable `[Windmill]`, `autoFuel` and/or `autoDeposit` as desired. `maximumBarley`
+   is still the config key for the **shared** grain queue capacity. `autoRange` and
+   ward filtering apply to all inputs and outputs. Restart the server and clients
+   after editing these settings.
+
+The managed regression tests and Release build pass. Live game/ownership tests and
+an independent dump of the 1.0.20 windmill recipe table remain outstanding; see
+[the verification record](docs/moose-oats-verification.md). Test in a disposable
+world before migrating an existing server.
+
 ## Useful Links
 *These are the links of the temporary home of the mod while the mod owners are unable to update the official repo.*
 * [Latest Release on Github](https://github.com/Grantapher/ValheimPlus/releases/latest)
@@ -53,7 +87,7 @@ In the current mod release, you should have the following versions:
     * This can be verified via logs only.
     * All the GitHub releases come with this version bundled.
     * Thunderstore supports having this dependency and installing it for you via a mod manager.
-* ValheimPlus version `0.10.3.0`
+* ValheimPlus version `0.10.3.1` for this fork
   * `(Grantapher)` will be appended to the title screen (not the log) to signify that it is not the official mod.
 
 For more info on compatibility of various V+ and Valheim versions, check out [COMPATIBILITY.md](COMPATIBILITY.md).

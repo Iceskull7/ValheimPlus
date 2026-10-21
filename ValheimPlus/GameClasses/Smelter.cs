@@ -121,10 +121,12 @@ namespace ValheimPlus.GameClasses
     [HarmonyPatch(typeof(Smelter), nameof(Smelter.Spawn))]
     public static class Smelter_Spawn_Patch
     {
-        private static bool Prefix(string ore, int stack, ref Smelter __instance)
+        /// <summary>Deposits configured machine outputs; windmills drop only the unaccepted remainder.</summary>
+        private static bool Prefix(string ore, ref int stack, ref Smelter __instance)
         {
             Smelter smelter = __instance; // allowing access to local function
-            if (!smelter.m_nview.IsOwner())
+            int originalStack = stack;
+            if (smelter.m_nview == null || !smelter.m_nview.IsValid() || !smelter.m_nview.IsOwner())
                 return true;
 
             if (__instance.m_name.Equals(SmelterDefinitions.KilnName) && Configuration.Current.Kiln.IsEnabled && Configuration.Current.Kiln.autoDeposit)
@@ -141,7 +143,7 @@ namespace ValheimPlus.GameClasses
             }
             if (__instance.m_name.Equals(SmelterDefinitions.WindmillName) && Configuration.Current.Windmill.IsEnabled && Configuration.Current.Windmill.autoDeposit)
             {
-                return spawn(Helper.Clamp(Configuration.Current.Windmill.autoRange, 1, 50), Configuration.Current.Windmill.ignorePrivateAreaCheck);
+                return SpawnWindmillOutput(smelter, ore, ref stack);
             }
             if (__instance.m_name.Equals(SmelterDefinitions.SpinningWheelName) && Configuration.Current.SpinningWheel.IsEnabled && Configuration.Current.SpinningWheel.autoDeposit)
             {
@@ -176,7 +178,7 @@ namespace ValheimPlus.GameClasses
 
                 // assign stack size, nobody wants a 0/20 stack of metals (its not very usefull)
                 ItemDrop comp = spawnedOre.GetComponent<ItemDrop>();
-                comp.m_itemData.m_stack = stack;
+                comp.m_itemData.m_stack = originalStack;
 
                 // Stamp the world level and cheat flag the same way Smelter.Spawn does, so what we
                 // put in the chest is indistinguishable from what the smelter would have dropped.
@@ -218,6 +220,63 @@ namespace ValheimPlus.GameClasses
 
 
             return true;
+        }
+
+        private static bool SpawnWindmillOutput(Smelter smelter, string ore, ref int stack)
+        {
+            var config = Configuration.Current.Windmill;
+            var chests = InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject,
+                Helper.Clamp(config.autoRange, 1, 50), !config.ignorePrivateAreaCheck);
+            if (chests.Count == 0 || stack <= 0) return true;
+
+            // Use the queued input's actual game conversion, including oats and barley.
+            // Do not substitute a flour prefab or add our own recipes.
+            var conversion = smelter.GetItemConversion(ore);
+            if (conversion?.m_to == null) return true;
+            var prefab = ObjectDB.instance.GetItemPrefab(conversion.m_to.gameObject.name);
+            if (prefab == null) return true;
+
+            GameObject temporary = null;
+            bool previousDisableInit = ZNetView.m_forceDisableInit;
+            try
+            {
+                try
+                {
+                    ZNetView.m_forceDisableInit = true;
+                    temporary = Object.Instantiate(prefab);
+                }
+                finally
+                {
+                    ZNetView.m_forceDisableInit = previousDisableInit;
+                }
+
+                var item = temporary.GetComponent<ItemDrop>();
+                item.m_itemData.m_stack = stack;
+                ItemDrop.OnCreateNew(item,
+                    (smelter.m_nview.GetZDO().GetBool(ZDOVars.s_cheatedQueued) ||
+                     smelter.m_nview.GetZDO().IsCheated()) && !PlayerProfile.s_bypassCheatChecks);
+
+                stack = ChestDeposit.Distribute(chests, stack,
+                    chest => chest.GetInventory().HaveItem(item.m_itemData.m_shared.m_name),
+                    (chest, amount) =>
+                    {
+                        item.m_itemData.m_stack = amount;
+                        // AddItem can fill existing stacks and still return false. Its ItemData
+                        // then contains only the remainder; true means the entire amount was added.
+                        return chest.GetInventory().AddItem(item.m_itemData) ? 0 : item.m_itemData.m_stack;
+                    },
+                    InventoryAssistant.ConveyContainerToNetwork);
+
+                if (stack > 0) return true; // Vanilla drops exactly the amount no chest accepted.
+
+                smelter.m_produceEffects.Create(smelter.transform.position, smelter.transform.rotation, null, 1f);
+                // Suppress the world drop only when every item has been deposited.
+                return false;
+            }
+            finally
+            {
+                if (temporary != null) Object.Destroy(temporary);
+            }
         }
     }
 

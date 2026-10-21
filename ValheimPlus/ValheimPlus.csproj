@@ -221,6 +221,7 @@
     <Compile Include="GameClasses\PickableItem.cs" />
     <Compile Include="GameClasses\PlayerProfile.cs" />
     <Compile Include="GameClasses\Procreation.cs" />
+    <Compile Include="GameClasses\ProcreationAnimals.cs" />
     <Compile Include="GameClasses\Recipe.cs" />
     <Compile Include="GameClasses\SapCollector.cs" />
     <Compile Include="GameClasses\SEMan.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="RPC\VPlusAck.cs" />
     <Compile Include="Utility\GameObjectAssistant.cs" />
     <Compile Include="Utility\InventoryAssistant.cs" />
+    <Compile Include="Utility\ChestDeposit.cs" />
     <Compile Include="Utility\ListExtensions.cs" />
     <Compile Include="Utility\PatchLog.cs" />
     <Compile Include="Utility\RPCQueue.cs" />
