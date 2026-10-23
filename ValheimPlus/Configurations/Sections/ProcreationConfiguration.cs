@@ -7,7 +7,7 @@ namespace ValheimPlus.Configurations.Sections
     {
         private const string Section = "Procreation";
 
-        private ConfigEntry<ProcreationAnimalType> animalTypesEntry;
+        private ConfigEntry<AnimalType> animalTypesEntry;
         private ConfigEntry<bool> loveInformationEntry;
         private ConfigEntry<bool> offspringInformationEntry;
         private ConfigEntry<float> requiredLovePointsMultiplierEntry;
@@ -19,7 +19,7 @@ namespace ValheimPlus.Configurations.Sections
         private ConfigEntry<float> creatureLimitMultiplierEntry;
         private ConfigEntry<float> maturityDurationMultiplierEntry;
 
-        public ProcreationAnimalType animalTypes => animalTypesEntry.Value;
+        public AnimalType animalTypes => animalTypesEntry.Value;
         public bool loveInformation => loveInformationEntry.Value;
         public bool offspringInformation => offspringInformationEntry.Value;
         public float requiredLovePointsMultiplier => requiredLovePointsMultiplierEntry.Value;
@@ -35,7 +35,7 @@ namespace ValheimPlus.Configurations.Sections
         {
             BindEnabled(config, Section, false,
                 "Change false to true to enable this section.");
-            animalTypesEntry = Bind(config, Section, "animalTypes", ProcreationAnimalType.All,
+            animalTypesEntry = Bind(config, Section, "animalTypes", AnimalType.All,
                 "A comma-separated list of animals whose breeding settings are changed.\nValid types are: boar, hen, wolf, lox, asksvin, moose, all, none");
             loveInformationEntry = Bind(config, Section, "loveInformation", false,
                 "Set to true to display the amount of love points a creature has.\nWhen they become pregnant it will display the amount of time until they give birth.");

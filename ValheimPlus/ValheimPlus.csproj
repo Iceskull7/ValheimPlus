@@ -221,7 +221,6 @@
     <Compile Include="GameClasses\PickableItem.cs" />
     <Compile Include="GameClasses\PlayerProfile.cs" />
     <Compile Include="GameClasses\Procreation.cs" />
-    <Compile Include="GameClasses\ProcreationAnimals.cs" />
     <Compile Include="GameClasses\Recipe.cs" />
     <Compile Include="GameClasses\SapCollector.cs" />
     <Compile Include="GameClasses\SEMan.cs" />

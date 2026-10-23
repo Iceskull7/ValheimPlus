@@ -2464,7 +2464,7 @@
 				"defaultValue": "false"
 			},
 			"animalTypes": {
-				"description": "A comma-separated list of animals that can be tamed. Valid types are: boar, hen, wolf, lox, asksvin, all, none",
+				"description": "A comma-separated list of animals that can be tamed. Valid types are: boar, hen, wolf, lox, asksvin, moose, all, none",
 				"defaultValue": "all",
 				"defaultType": "string"
 			},
@@ -2664,7 +2664,7 @@
 				"defaultType": "bool"
 			},
 			"autoFuel": {
-				"description": "Fill free windmill slots from nearby chests using the game's conversions, including barley and oats. Checks nearest chests first, then inputs in the game's conversion order; missing inputs do not block other inputs.",
+				"description": "Fill free windmill slots from nearby chests using the game's conversions, including barley and oats. Process intermediate ingredients such as oats before raw seeds, then prefer the nearest chests.",
 				"defaultValue": "false",
 				"defaultType": "bool"
 			},

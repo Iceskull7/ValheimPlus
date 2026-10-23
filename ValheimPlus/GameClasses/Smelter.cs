@@ -283,6 +283,20 @@ namespace ValheimPlus.GameClasses
     [HarmonyPatch(typeof(Smelter), nameof(Smelter.UpdateSmelter))]
     public static class Smelter_UpdateSmelter_Patch
     {
+        private static void Postfix(Smelter __instance)
+        {
+            var config = Configuration.Current.Windmill;
+            if (!config.IsEnabled || !config.autoDeposit ||
+                __instance.m_name != SmelterDefinitions.WindmillName ||
+                __instance.m_nview == null || !__instance.m_nview.IsValid() || !__instance.m_nview.IsOwner())
+                return;
+
+            // Windmills buffer a partial stack while input remains. Flush through the normal
+            // output path so auto-fuelling cannot indefinitely postpone the chest deposit.
+            if (__instance.GetProcessedQueueSize() > 0)
+                __instance.SpawnProcessed();
+        }
+
         static void Prefix(Smelter __instance)
         {
             if (__instance == null || __instance.m_nview == null || !__instance.m_nview.IsOwner())
@@ -390,41 +404,50 @@ namespace ValheimPlus.GameClasses
             if (toMaxOre > 0)
             {
                 List<Container> nearbyChests = InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, autoFuelRange, !ignorePrivateAreaCheck);
-                foreach (Container c in nearbyChests)
+                var oreSources = nearbyChests.SelectMany(chest => smelter.m_conversion,
+                    (chest, conversion) => (Chest: chest, Conversion: conversion));
+                if (smelter.m_name == SmelterDefinitions.WindmillName)
                 {
-                    foreach (Smelter.ItemConversion itemConversion in smelter.m_conversion)
+                    // Finish intermediate products (Oat -> OatFlour) before starting more
+                    // raw inputs (OatSeeds -> Oat), even when they are in a farther chest.
+                    oreSources = oreSources.OrderByDescending(source =>
+                        smelter.m_conversion.Any(conversion => conversion.m_to == source.Conversion.m_from));
+                }
+
+                foreach (var source in oreSources)
+                {
+                    Container c = source.Chest;
+                    Smelter.ItemConversion itemConversion = source.Conversion;
+                    if (isKiln)
                     {
-                        if (isKiln)
+                        if (Configuration.Current.Kiln.dontProcessFineWood && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.FineWoodName)) continue;
+                        if (Configuration.Current.Kiln.dontProcessRoundLog && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.RoundLogName)) continue;
+
+                        int threshold = Configuration.Current.Kiln.stopAutoFuelThreshold < 0 ? 0 : Configuration.Current.Kiln.stopAutoFuelThreshold;
+                        if (threshold > 0 && InventoryAssistant.GetItemAmountInItemList(InventoryAssistant.GetNearbyChestItemsByContainerList(nearbyChests), itemConversion.m_to.m_itemData) >= threshold) return;
+                    }
+
+                    ItemDrop.ItemData oreItem = itemConversion.m_from.m_itemData;
+
+                    // Read the flag off the chest's own item before we take it, so cheated ore
+                    // stays cheated once it is in the smelter.
+                    bool oreCheated = c.GetInventory().GetAllItems()
+                        .Any(i => i.m_shared.m_name == oreItem.m_shared.m_name && i.m_cheated);
+
+                    int addedOres = InventoryAssistant.RemoveItemFromChest(c, oreItem, toMaxOre);
+                    if (addedOres > 0)
+                    {
+                        GameObject orePrefab = ObjectDB.instance.GetItemPrefab(itemConversion.m_from.gameObject.name);
+
+                        for (int i = 0; i < addedOres; i++)
                         {
-                            if (Configuration.Current.Kiln.dontProcessFineWood && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.FineWoodName)) continue;
-                            if (Configuration.Current.Kiln.dontProcessRoundLog && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.RoundLogName)) continue;
-
-                            int threshold = Configuration.Current.Kiln.stopAutoFuelThreshold < 0 ? 0 : Configuration.Current.Kiln.stopAutoFuelThreshold;
-                            if (threshold > 0 && InventoryAssistant.GetItemAmountInItemList(InventoryAssistant.GetNearbyChestItemsByContainerList(nearbyChests), itemConversion.m_to.m_itemData) >= threshold) return;
+                            smelter.m_nview.InvokeRPC("RPC_AddOre", new object[] { orePrefab.name, oreCheated });
                         }
-
-                        ItemDrop.ItemData oreItem = itemConversion.m_from.m_itemData;
-
-                        // Read the flag off the chest's own item before we take it, so cheated ore
-                        // stays cheated once it is in the smelter.
-                        bool oreCheated = c.GetInventory().GetAllItems()
-                            .Any(i => i.m_shared.m_name == oreItem.m_shared.m_name && i.m_cheated);
-
-                        int addedOres = InventoryAssistant.RemoveItemFromChest(c, oreItem, toMaxOre);
+                        toMaxOre -= addedOres;
                         if (addedOres > 0)
-                        {
-                            GameObject orePrefab = ObjectDB.instance.GetItemPrefab(itemConversion.m_from.gameObject.name);
-
-                            for (int i = 0; i < addedOres; i++)
-                            {
-                                smelter.m_nview.InvokeRPC("RPC_AddOre", new object[] { orePrefab.name, oreCheated });
-                            }
-                            toMaxOre -= addedOres;
-                            if (addedOres > 0)
-                                ValheimPlusPlugin.Logger.LogDebug("Added " + addedOres + " ores(" + oreItem.m_shared.m_name + ") in " + smelter.m_name);
-                            if (toMaxOre == 0)
-                                return;
-                        }
+                            ValheimPlusPlugin.Logger.LogDebug("Added " + addedOres + " ores(" + oreItem.m_shared.m_name + ") in " + smelter.m_name);
+                        if (toMaxOre == 0)
+                            return;
                     }
                 }
             }
