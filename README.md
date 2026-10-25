@@ -1,3 +1,5 @@
+> **Iceskull temporary fork:** This fork incorporates the gameplay updates from Grantapher ValheimPlus 10.4.0.0 while retaining its existing configuration names and custom behavior. Armor mould settings remain under `[Moulds]`, Gathering keeps `frostwood` and `goldOre`, windmills retain `oatProcessing` and protected oat stacks, and container resizing preserves occupied slots. Existing seed modifiers are carried over automatically when the new `[Pickable] seeds` setting is absent. Fork releases retain their own version sequence and packaging.
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/grantapher/ValheimPlus/main/logo.png" alt="ValheimPlus Logo"/>
 </p>
@@ -30,6 +32,7 @@ A HarmonyX Mod aimed at improving the gameplay quality of Valheim. The mod inclu
 - Disable the use of portals.
 - Shorten the portal teleport animation time to the minimum possible.
 - Modify the Guardian buff duration, cooldown and animation.
+- Modify adrenaline gain and decay, how much adrenaline trinkets need, and how long their effects last.
 - Disable tutorials from Valkyrie.
 - Skip the game's intro sequence.
 - Disable the "I have arrived!" message on spawn.
@@ -62,6 +65,7 @@ A HarmonyX Mod aimed at improving the gameplay quality of Valheim. The mod inclu
 - Force all players in the server to display their map position.
 - Allow all players to share all map exploration with every other player in the server, as long as their map position is displayed.
 - A system to automatically share all map progression with players connecting, even if they have never been on the server.
+- Share map pins through the server. Other players' pins appear faded until clicked, and deleting a pin removes it for everyone.
 - Modify the radius of the map that is explored as you move.
 - Option to show boats and carts on the map with icons.
 
@@ -87,14 +91,17 @@ A HarmonyX Mod aimed at improving the gameplay quality of Valheim. The mod inclu
 
 ### Gathering
 
-- Modify the amount of resources dropped on destruction of objects (this includes chitin, stone, all types of wood, feathers, and minerals).
+- Modify the amount of resources dropped on destruction of objects (this includes chitin, stone, all types of wood, feathers, minerals, ice and soft tissue).
 - Modify the amount of resources gathered from interactable objects.
-  - Edibles: Carrots, Blueberries, Cloudberrys, Raspberrys, Mushrooms, Blue Mushrooms, Yellow Mushrooms, Magecap Mushrooms, Jotun Puffs, Smoke Puffs, Fiddleheads, Vineberrys, Onions
-  - Flowers and Ingredients : Barley, Carrot Seeds, Dandelions, Flax, Thistle, Turnip Seeds, Turnip, Onion Seeds, Royal Jelly, Volture Eggs
-  - Materials : Bone Fragments, Flint, Stone, Wood, Crystal, Tar, Wolf Hair, Wolf Claw
-  - Valuables : Ambers, Amber Pearls, Coins, Rubys
+  - Edibles: Carrots, Blueberries, Cloudberrys, Raspberrys, Mushrooms, Blue Mushrooms, Yellow Mushrooms, Magecap Mushrooms, Jotun Puffs, Smoke Puffs, Fiddleheads, Vineberrys, Onions, Lingonberries, Kale, Poteitr
+  - Flowers and Ingredients: Barley, Dandelions, Flax, Thistle, Turnip, Royal Jelly, Volture Eggs, Entrails
+  - Seeds: Carrot Seeds, Turnip Seeds, Onion Seeds, Kale Seeds, Oat Seeds
+  - Materials : Bone Fragments, Flint, Stone, Wood, Crystal, Tar, Wolf Hair, Wolf Claw, Obsidian, Grausten, ore and other minerals, Charred Skulls
+  - Valuables : Ambers, Amber Pearls, Coins, Rubys, Gemstones
   - Surtling cores on item stands inside dungeons.
   - Black cores on item stands inside dungeons.
+  - Molten cores
+  - Frostcores.
   - Quest items you can pick up: Dragon Egg, Withered Bone, Goblin Totem
 - Modify the drop chance of resources from destroyed objects that have a drop chance like muddy scrap piles.
 
@@ -223,6 +230,7 @@ _These are the `Kiln`, `Smelter` and `Furnace` config sections respectively._
 - Modify maximum amount of barley that can be placed inside.
 - Allow ignoring wind intensity so it's always producing at max speed.
 - Allow barley to be automatically pulled from closest containers.
+- Allow the Windmill to stop pulling oats from closest containers when a specific amount of oat flour has been reached.
 - Allow items produced by Windmill to be automatically placed in the closest containers.
 
 ### Spinning Wheel

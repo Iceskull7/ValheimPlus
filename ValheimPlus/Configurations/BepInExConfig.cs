@@ -67,8 +67,7 @@ namespace ValheimPlus.Configurations
             config.SaveOnConfigSet = false;
             try
             {
-                Configuration.Current = BindSections(config);
-                if (legacy != null) ImportLegacyValues(config, legacy);
+                Configuration.Current = BindSections(config, legacy);
                 config.Save();
             }
             finally
@@ -188,6 +187,40 @@ namespace ValheimPlus.Configurations
             return File.Exists(config.ConfigFilePath) ? LegacyMode.Override : LegacyMode.Migrate;
         }
 
+        /// <summary>Checks before binding, when BepInEx still keeps saved entries outside its public Keys.</summary>
+        private static bool HasSavedSetting(ConfigFile config, string section, string key)
+        {
+            if (config.ContainsKey(new ConfigDefinition(section, key))) return true;
+            if (!File.Exists(config.ConfigFilePath)) return false;
+
+            try
+            {
+                var currentSection = string.Empty;
+                foreach (var rawLine in File.ReadLines(config.ConfigFilePath))
+                {
+                    // Match BepInEx's parser; only section and key presence matter, not the value.
+                    var line = rawLine.Trim();
+                    if (line.StartsWith("#")) continue;
+                    if (line.StartsWith("[") && line.EndsWith("]"))
+                    {
+                        currentSection = line.Substring(1, line.Length - 2);
+                        continue;
+                    }
+
+                    var separator = line.IndexOf('=');
+                    if (currentSection == section && separator >= 0 && line.Substring(0, separator).Trim() == key)
+                        return true;
+                }
+                return false;
+            }
+            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+            {
+                ValheimPlusPlugin.Logger.LogWarning(
+                    $"Could not check whether [{section}] {key} is already configured; its migration was skipped: {e.Message}");
+                return true;
+            }
+        }
+
         /// <summary>Reads the legacy config, or returns null when it cannot be read.</summary>
         private static IniData ReadLegacyIni(LegacyMode mode)
         {
@@ -272,8 +305,10 @@ namespace ValheimPlus.Configurations
             }
         }
 
-        private static Configuration BindSections(ConfigFile config)
+        private static Configuration BindSections(ConfigFile config, IniData legacy)
         {
+            var initializeSeedModifier = !HasSavedSetting(config, "Pickable", "seeds") &&
+                legacy?["Pickable"]?.ContainsKey("seeds") != true;
             var configuration = new Configuration();
             Sections.Clear();
 
@@ -285,6 +320,13 @@ namespace ValheimPlus.Configurations
                 section.Bind(config);
                 property.SetValue(configuration, section, null);
                 Sections.Add(section);
+            }
+
+            if (legacy != null) ImportLegacyValues(config, legacy);
+            if (initializeSeedModifier)
+            {
+                // Seeds used to share this modifier. Copy it once without replacing an explicit zero.
+                config["Pickable", "seeds"].BoxedValue = configuration.Pickable.flowersAndIngredients;
             }
 
             return configuration;

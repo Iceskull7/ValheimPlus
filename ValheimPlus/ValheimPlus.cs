@@ -28,7 +28,8 @@ namespace ValheimPlus
         private const string ValheimPlusName = "Valheim Plus";
 
         // Version used when numeric is required (assembly info, System.Version parsing).
-        public const string NumericVersion = "0.10.3.0";
+        // This fork retains its existing numeric version sequence.
+        public const string NumericVersion = "0.10.3.6";
 
         // Extra version, like alpha/beta/rc/stable. Can leave blank if a stable release.
         // Must start with `-` or be blank.
@@ -73,8 +74,8 @@ namespace ValheimPlus
         private static bool configLoaded;
 
         // Project Repository Info
-        public const string Repository = "https://github.com/Grantapher/ValheimPlus/releases/latest";
-        private const string ApiRepository = "https://api.github.com/repos/grantapher/valheimPlus/releases/latest";
+        public const string Repository = "https://github.com/Iceskull7/ValheimPlus/releases/latest";
+        private const string ApiRepository = "https://api.github.com/repos/Iceskull7/ValheimPlus/releases/latest";
 
 
         // Awake is called once when both the game and the plug-in are loaded
@@ -112,11 +113,14 @@ namespace ValheimPlus
                 if (!Directory.Exists(VPlusDataDirectoryPath)) Directory.CreateDirectory(VPlusDataDirectoryPath);
 
                 //Map Sync Save Timer
-                if (ZNet.m_isServer && Configuration.Current.Map.IsEnabled &&
-                    Configuration.Current.Map.shareMapProgression)
+                var map = Configuration.Current.Map;
+                if (ZNet.m_isServer && map.IsEnabled && (map.shareMapProgression || map.syncPins))
                 {
                     MapSyncSaveTimer.AutoReset = true;
-                    MapSyncSaveTimer.Elapsed += (_, _) => VPlusMapSync.SaveMapDataToDisk();
+                    if (map.shareMapProgression)
+                        MapSyncSaveTimer.Elapsed += (_, _) => VPlusMapSync.SaveMapDataToDisk();
+                    if (map.syncPins)
+                        MapSyncSaveTimer.Elapsed += (_, _) => VPlusMapPinSync.SavePinsToDisk();
                 }
 
             }

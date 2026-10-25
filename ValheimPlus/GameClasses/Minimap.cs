@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,17 +62,21 @@ namespace ValheimPlus.GameClasses
     {
         private static void Postfix()
         {
-            if (ZNet.m_isServer && Configuration.Current.Map.IsEnabled && Configuration.Current.Map.shareMapProgression)
+            var map = Configuration.Current.Map;
+            if (!ZNet.m_isServer || !map.IsEnabled) return;
+
+            if (map.shareMapProgression)
             {
                 //Init map array
                 VPlusMapSync.ServerMapData = new BitArray(Minimap.instance.m_textureSize * Minimap.instance.m_textureSize);
 
                 //Load map data from disk
                 VPlusMapSync.LoadMapDataFromDisk();
-
-                //Start map data save timer
-                ValheimPlusPlugin.MapSyncSaveTimer.Start();
             }
+
+            //Start the save timer, which also saves shared map pins
+            if (map.shareMapProgression || map.syncPins)
+                ValheimPlusPlugin.MapSyncSaveTimer.Start();
         }
     }
 
@@ -86,6 +91,7 @@ namespace ValheimPlus.GameClasses
         static int RaftHashcode = "Raft".GetStableHashCode();
         static int KarveHashcode = "Karve".GetStableHashCode();
         static int LongshipHashcode = "VikingShip".GetStableHashCode();
+        static int DrakkarHashcode = "VikingShip_Ashlands".GetStableHashCode();
         static int hammerHashCode = "Hammer".GetStableHashCode();
         static float updateInterval = 5.0f;
 
@@ -118,6 +124,15 @@ namespace ValheimPlus.GameClasses
                 {
                     Piece p = piece.GetComponent<Piece>();
                     icons.Add(p.name.GetStableHashCode(), p.m_icon);
+                }
+
+                // Fall back to the prefab's own piece icon for anything not on the hammer.
+                foreach (int hashCode in new[] { CartHashcode, RaftHashcode, KarveHashcode, LongshipHashcode, DrakkarHashcode })
+                {
+                    if (icons.ContainsKey(hashCode)) continue;
+                    GameObject prefab = ZNetScene.instance ? ZNetScene.instance.GetPrefab(hashCode) : null;
+                    Piece p = prefab ? prefab.GetComponent<Piece>() : null;
+                    if (p && p.m_icon) icons.Add(hashCode, p.m_icon);
                 }
             }
 
@@ -185,6 +200,8 @@ namespace ValheimPlus.GameClasses
                                 continue;
                             if (CheckPin(__instance, player, zdo, LongshipHashcode, "Longship"))
                                 continue;
+                            if (CheckPin(__instance, player, zdo, DrakkarHashcode, "Drakkar"))
+                                continue;
                         }
                     }
                 }
@@ -200,5 +217,74 @@ namespace ValheimPlus.GameClasses
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Sends pins this player places to the server, which owns the shared list.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.AddPin))]
+    public static class Minimap_AddPin_Patch
+    {
+        [UsedImplicitly]
+        private static void Postfix(Minimap.PinData __result) => VPlusMapPinSync.SendAdd(__result);
+    }
+
+    /// <summary>
+    /// Vanilla adds a map-click pin unnamed and names it when the dialog closes, so sharing waits for the name.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.ShowPinNameInput))]
+    public static class Minimap_ShowPinNameInput_Patch
+    {
+        [UsedImplicitly]
+        private static void Prefix() => VPlusMapPinSync.CreatingNamedPin = true;
+
+        [UsedImplicitly]
+        private static void Finalizer() => VPlusMapPinSync.CreatingNamedPin = false;
+    }
+
+    /// <summary>
+    /// Reading a cartography table removes faded pins the table lacks. Keeps that local and restores shared pins.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.AddSharedMapData))]
+    public static class Minimap_AddSharedMapData_Patch
+    {
+        [UsedImplicitly]
+        private static void Prefix() => VPlusMapPinSync.BeginMapTableRead();
+
+        [UsedImplicitly]
+        private static void Finalizer() => VPlusMapPinSync.EndMapTableRead();
+    }
+
+    /// <summary>
+    /// Shares the pin held for the name dialog once the dialog lets go of it, whichever way it closed.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.Update))]
+    public static class Minimap_Update_Patch
+    {
+        [UsedImplicitly]
+        private static void Postfix(Minimap __instance, Minimap.PinData ___m_namePin) =>
+            VPlusMapPinSync.FlushNamedPin(__instance, ___m_namePin);
+    }
+
+    /// <summary>
+    /// Sends pin deletions to the server. A delete applies to every player.
+    /// Both vanilla remove paths funnel through this overload, and ClearPins does not,
+    /// so leaving a world never looks like a deletion.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.RemovePin), typeof(Minimap.PinData))]
+    public static class Minimap_RemovePin_Patch
+    {
+        [UsedImplicitly]
+        private static void Prefix(Minimap.PinData pin) => VPlusMapPinSync.SendRemove(pin);
+    }
+
+    /// <summary>
+    /// Drops shared pin state when leaving a world.
+    /// </summary>
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.OnDestroy))]
+    public static class Minimap_OnDestroy_PinSync_Patch
+    {
+        [UsedImplicitly]
+        private static void Postfix() => VPlusMapPinSync.Reset();
     }
 }

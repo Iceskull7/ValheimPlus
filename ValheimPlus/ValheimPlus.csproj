@@ -182,6 +182,7 @@
     <Compile Include="Configurations\ConfigurationManagerWatcher.cs" />
     <Compile Include="Configurations\Sections\AdvancedBuildingModeConfiguration.cs" />
     <Compile Include="Configurations\Sections\AdvancedEditingModeConfiguration.cs" />
+    <Compile Include="Configurations\Sections\AdrenalineConfiguration.cs" />
     <Compile Include="Configurations\Sections\BeehiveConfiguration.cs" />
     <Compile Include="Configurations\Sections\BuildingConfiguration.cs" />
     <Compile Include="Configurations\Sections\GridAlignmentConfiguration.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="GameClasses\Chat.cs" />
     <Compile Include="GameClasses\ZPlayFabMatchmaking.cs" />
     <Compile Include="GameClasses\WispSpawner.cs" />
+    <Compile Include="RPC\VPlusMapPinSync.cs" />
     <Compile Include="UI\HotkeyBar.cs" />
     <Compile Include="GameClasses\Hud.cs" />
     <Compile Include="GameClasses\EventSystem.cs" />

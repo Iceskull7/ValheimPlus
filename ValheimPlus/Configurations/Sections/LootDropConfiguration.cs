@@ -19,7 +19,7 @@ namespace ValheimPlus.Configurations.Sections
             lootDropAmountMultiplierEntry = Bind(config, Section, "lootDropAmountMultiplier", 0f,
                 "Change the amount of loot dropped when creatures or monsters are slain.\nA value of -100 will eliminate all drops, 0 will have no effect, 100 will double drops, 200 will triple and so on.");
             lootDropChanceMultiplierEntry = Bind(config, Section, "lootDropChanceMultiplier", 0f,
-                "Change the chance of loot dropping when creatures or monsters are slain.\nA value of -100 will eliminate all drops, 0 will have no effect, 100 will double the percent of getting a drop, 200 will triple and so on.\nExample: If a drop has a 40% chance, setting this to 200 will make that chance 80%,\nand setting it to 300 will make it 100% (120% technically, but anything above 100% acts as 100%)");
+                "Change the chance of loot dropping when creatures or monsters are slain.\nA value of -100 will eliminate all drops, 0 will have no effect, 100 will double the percent of getting a drop, 200 will triple and so on.\nExample: If a drop has a 40% chance, setting this to 100 will make that chance 80%,\nand setting it to 200 will make it 100% (120% technically, but anything above 100% acts as 100%)");
         }
     }
 }

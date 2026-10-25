@@ -226,6 +226,15 @@ namespace ValheimPlus.GameClasses
                 VPlusMapSync.ShouldSyncOnSpawn = false;
                 VPlusMapSync.SendMapToServer();
             }
+
+            //Only sync on first spawn
+            if (VPlusMapPinSync.ShouldSyncOnSpawn && Configuration.Current.Map.IsEnabled &&
+                Configuration.Current.Map.syncPins)
+            {
+                //Ask the server for the shared pin list
+                VPlusMapPinSync.RequestSnapshot();
+                VPlusMapPinSync.ShouldSyncOnSpawn = false;
+            }
         }
     }
 
@@ -1405,6 +1414,54 @@ namespace ValheimPlus.GameClasses
             {
                 ___m_teleportTimer += Helper.Clamp(8.1f - ___m_teleportTimer, 0, float.MaxValue);
             }
+        }
+    }
+
+    /// <summary>
+    /// Scales adrenaline gains, and decay while Player.UpdateStats runs. Penalties keep their vanilla size.
+    /// </summary>
+    [HarmonyPatch(typeof(Player), nameof(Player.AddAdrenaline))]
+    public static class Player_AddAdrenaline_Patch
+    {
+        [UsedImplicitly]
+        private static void Prefix(ref float v)
+        {
+            var config = Configuration.Current.Adrenaline;
+            if (!config.IsEnabled) return;
+
+            if (v > 0f)
+                v = Helper.applyModifierValue(v, config.gainMultiplier);
+            else if (v < 0f && Player_UpdateStats_Patch.InUpdateStats)
+                v = Math.Min(0f, Helper.applyModifierValue(v, config.decayMultiplier));
+        }
+    }
+
+    /// <summary>Decay is the only adrenaline change made in UpdateStats, so this flag tells it apart from penalties.</summary>
+    [HarmonyPatch(typeof(Player), nameof(Player.UpdateStats), typeof(float))]
+    public static class Player_UpdateStats_Patch
+    {
+        internal static bool InUpdateStats;
+
+        [UsedImplicitly]
+        private static void Prefix() => InUpdateStats = true;
+
+        [UsedImplicitly]
+        private static void Postfix() => InUpdateStats = false;
+    }
+
+    /// <summary>
+    /// Scales the adrenaline equipped trinkets need, which is what they add to the bar.
+    /// </summary>
+    [HarmonyPatch(typeof(Player), nameof(Player.GetEquipmentMaxAdrenaline))]
+    public static class Player_GetEquipmentMaxAdrenaline_Patch
+    {
+        [UsedImplicitly]
+        private static void Postfix(ref float __result)
+        {
+            var config = Configuration.Current.Adrenaline;
+            if (!config.IsEnabled || __result <= 0f) return;
+
+            __result = Helper.applyModifierValue(__result, Math.Max(config.trinketCostMultiplier, -99f));
         }
     }
 }

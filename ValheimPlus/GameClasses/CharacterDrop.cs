@@ -47,12 +47,14 @@ namespace ValheimPlus
                 {
                     changed = true;
                     chance = Helper.applyModifierValue(chance, mouldModifier);
-                    // The game's pseudo-drop path can award a zero-chance entry. Omit
-                    // disabled moulds entirely, including invalid nonpositive results.
-                    if (!(chance > 0f)) continue;
                     // Above 100% is already guaranteed; bound extreme values before native math.
                     chance = Math.Min(1f, chance);
                 }
+
+                // The game's pseudo-drop path can award a zero-chance entry. Omit
+                // every item whose final chance is nonpositive, including when the
+                // global LootDrop modifier disables ordinary loot rather than moulds.
+                if (!(chance > 0f)) continue;
 
                 modifiedDrops.Add(new CharacterDrop.Drop
                 {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using JetBrains.Annotations;
 using UnityEngine;
 using ValheimPlus.Configurations;
 using ValheimPlus.Utility;
@@ -121,64 +122,89 @@ namespace ValheimPlus.GameClasses
     [HarmonyPatch(typeof(Smelter), nameof(Smelter.Spawn))]
     public static class Smelter_Spawn_Patch
     {
-        /// <summary>Deposits configured machine outputs; windmills drop only the unaccepted remainder.</summary>
+        [UsedImplicitly]
         private static bool Prefix(string ore, ref int stack, ref Smelter __instance)
         {
-            Smelter smelter = __instance; // allowing access to local function
-            int originalStack = stack;
-            if (smelter.m_nview == null || !smelter.m_nview.IsValid() || !smelter.m_nview.IsOwner())
+            if (__instance.m_nview == null || !__instance.m_nview.IsValid() || !__instance.m_nview.IsOwner())
                 return true;
 
-            if (__instance.m_name.Equals(SmelterDefinitions.KilnName) && Configuration.Current.Kiln.IsEnabled && Configuration.Current.Kiln.autoDeposit)
+            if (__instance.m_name.Equals(SmelterDefinitions.KilnName) && Configuration.Current.Kiln.IsEnabled &&
+                Configuration.Current.Kiln.autoDeposit)
             {
-                return spawn(Helper.Clamp(Configuration.Current.Kiln.autoRange, 1, 50), Configuration.Current.Kiln.ignorePrivateAreaCheck);
+                return Deposit(__instance, ore, ref stack, Configuration.Current.Kiln.autoRange,
+                    Configuration.Current.Kiln.ignorePrivateAreaCheck);
             }
-            if (__instance.m_name.Equals(SmelterDefinitions.SmelterName) && Configuration.Current.Smelter.IsEnabled && Configuration.Current.Smelter.autoDeposit)
-            {
-                return spawn(Helper.Clamp(Configuration.Current.Smelter.autoRange, 1, 50), Configuration.Current.Smelter.ignorePrivateAreaCheck);
-            }
-            if (__instance.m_name.Equals(SmelterDefinitions.FurnaceName) && Configuration.Current.Furnace.IsEnabled && Configuration.Current.Furnace.autoDeposit)
-            {
-                return spawn(Helper.Clamp(Configuration.Current.Furnace.autoRange, 1, 50), Configuration.Current.Furnace.ignorePrivateAreaCheck);
-            }
-            if (__instance.m_name.Equals(SmelterDefinitions.WindmillName) && Configuration.Current.Windmill.IsEnabled && Configuration.Current.Windmill.autoDeposit)
-            {
-                return SpawnWindmillOutput(smelter, ore, ref stack);
-            }
-            if (__instance.m_name.Equals(SmelterDefinitions.SpinningWheelName) && Configuration.Current.SpinningWheel.IsEnabled && Configuration.Current.SpinningWheel.autoDeposit)
-            {
-                return spawn(Helper.Clamp(Configuration.Current.SpinningWheel.autoRange, 1, 50), Configuration.Current.SpinningWheel.ignorePrivateAreaCheck);
-            }
-            if (__instance.m_name.Equals(SmelterDefinitions.EitrRefineryName) && Configuration.Current.EitrRefinery.IsEnabled && Configuration.Current.EitrRefinery.autoDeposit)
-            {
-                return spawn(Helper.Clamp(Configuration.Current.EitrRefinery.autoRange, 1, 50), Configuration.Current.EitrRefinery.ignorePrivateAreaCheck);
-            }
-            if (__instance.m_name.Equals(SmelterDefinitions.FrigidKilnName) && Configuration.Current.FrigidKiln.IsEnabled && Configuration.Current.FrigidKiln.autoDeposit)
-            {
-                return spawn(Helper.Clamp(Configuration.Current.FrigidKiln.autoRange, 1, 50), Configuration.Current.FrigidKiln.ignorePrivateAreaCheck);
-            }
-            bool spawn(float autoDepositRange, bool ignorePrivateAreaCheck)
-            {
-                List<Container> nearbyChests = InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, autoDepositRange, !ignorePrivateAreaCheck);
-                if (nearbyChests.Count == 0)
-                    return true;
 
-                if (autoDepositRange > 50)
-                    autoDepositRange = 50;
-                else if (autoDepositRange < 1)
-                    autoDepositRange = 1;
+            if (__instance.m_name.Equals(SmelterDefinitions.SmelterName) && Configuration.Current.Smelter.IsEnabled &&
+                Configuration.Current.Smelter.autoDeposit)
+            {
+                return Deposit(__instance, ore, ref stack, Configuration.Current.Smelter.autoRange,
+                    Configuration.Current.Smelter.ignorePrivateAreaCheck);
+            }
 
-                // Replicating original code, just "spawning/adding" the item inside the chest makes it "not have a prefab"
-                GameObject itemPrefab = ObjectDB.instance.GetItemPrefab(smelter.GetItemConversion(ore).m_to.gameObject.name);
+            if (__instance.m_name.Equals(SmelterDefinitions.FurnaceName) && Configuration.Current.Furnace.IsEnabled &&
+                Configuration.Current.Furnace.autoDeposit)
+            {
+                return Deposit(__instance, ore, ref stack, Configuration.Current.Furnace.autoRange,
+                    Configuration.Current.Furnace.ignorePrivateAreaCheck);
+            }
 
-                // Also replication of original code, really have no idead what it is for, didn't bother look
-                ZNetView.m_forceDisableInit = true;
-                GameObject spawnedOre = Object.Instantiate<GameObject>(itemPrefab);
-                ZNetView.m_forceDisableInit = false;
+            if (__instance.m_name.Equals(SmelterDefinitions.WindmillName) && Configuration.Current.Windmill.IsEnabled &&
+                Configuration.Current.Windmill.autoDeposit)
+            {
+                return SpawnWindmillOutput(__instance, ore, ref stack);
+            }
 
+            if (__instance.m_name.Equals(SmelterDefinitions.SpinningWheelName) &&
+                Configuration.Current.SpinningWheel.IsEnabled && Configuration.Current.SpinningWheel.autoDeposit)
+            {
+                return Deposit(__instance, ore, ref stack, Configuration.Current.SpinningWheel.autoRange,
+                    Configuration.Current.SpinningWheel.ignorePrivateAreaCheck);
+            }
+
+            if (__instance.m_name.Equals(SmelterDefinitions.EitrRefineryName) &&
+                Configuration.Current.EitrRefinery.IsEnabled && Configuration.Current.EitrRefinery.autoDeposit)
+            {
+                return Deposit(__instance, ore, ref stack, Configuration.Current.EitrRefinery.autoRange,
+                    Configuration.Current.EitrRefinery.ignorePrivateAreaCheck);
+            }
+
+            if (__instance.m_name.Equals(SmelterDefinitions.FrigidKilnName) &&
+                Configuration.Current.FrigidKiln.IsEnabled && Configuration.Current.FrigidKiln.autoDeposit)
+            {
+                return Deposit(__instance, ore, ref stack, Configuration.Current.FrigidKiln.autoRange,
+                    Configuration.Current.FrigidKiln.ignorePrivateAreaCheck);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Puts the output in nearby chests. Returns true to let vanilla drop what no chest took, with stack set to that amount.
+        /// </summary>
+        private static bool Deposit(Smelter smelter, string ore, ref int stack, float autoDepositRange,
+            bool ignorePrivateAreaCheck)
+        {
+            var range = Helper.Clamp(autoDepositRange, 1, 50);
+            List<Container> nearbyChests =
+                InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, range, !ignorePrivateAreaCheck);
+            if (nearbyChests.Count == 0)
+                return true;
+
+            // Replicating original code, just "spawning/adding" the item inside the chest makes it "not have a prefab"
+            GameObject itemPrefab =
+                ObjectDB.instance.GetItemPrefab(smelter.GetItemConversion(ore).m_to.gameObject.name);
+
+            // Also replication of original code, really have no idea what it is for, didn't bother to look
+            ZNetView.m_forceDisableInit = true;
+            GameObject spawnedOre = Object.Instantiate<GameObject>(itemPrefab);
+            ZNetView.m_forceDisableInit = false;
+
+            try
+            {
                 // assign stack size, nobody wants a 0/20 stack of metals (its not very usefull)
                 ItemDrop comp = spawnedOre.GetComponent<ItemDrop>();
-                comp.m_itemData.m_stack = originalStack;
+                comp.m_itemData.m_stack = stack;
 
                 // Stamp the world level and cheat flag the same way Smelter.Spawn does, so what we
                 // put in the chest is indistinguishable from what the smelter would have dropped.
@@ -187,39 +213,36 @@ namespace ValheimPlus.GameClasses
                      smelter.m_nview.GetZDO().IsCheated()) &&
                     !PlayerProfile.s_bypassCheatChecks);
 
-                bool result = spawnNearbyChest(true);
-                Object.Destroy(spawnedOre);
-
-                bool spawnNearbyChest(bool mustHaveItem)
+                // Chests that already hold the item first, then any chest.
+                for (int pass = 0; pass < 2; pass++)
                 {
                     foreach (Container chest in nearbyChests)
                     {
                         Inventory cInventory = chest.GetInventory();
-                        if (mustHaveItem && !cInventory.HaveItem(comp.m_itemData.m_shared.m_name))
+                        if (pass == 0 && !cInventory.HaveItem(comp.m_itemData.m_shared.m_name))
                             continue;
 
+                        // AddItem can top up existing stacks and still return false, leaving only the rest in the item.
+                        int before = comp.m_itemData.m_stack;
                         bool added = cInventory.AddItem(comp.m_itemData);
+                        if (added || comp.m_itemData.m_stack < before)
+                            InventoryAssistant.ConveyContainerToNetwork(chest);
                         if (!added)
-                        {
-                            // Chest full, move to the next
                             continue;
-                        }
 
-                        smelter.m_produceEffects.Create(smelter.transform.position, smelter.transform.rotation, null, 1f);
-                        InventoryAssistant.ConveyContainerToNetwork(chest);
+                        smelter.m_produceEffects.Create(smelter.transform.position, smelter.transform.rotation);
                         return false;
                     }
-
-                    if (mustHaveItem)
-                        return spawnNearbyChest(false);
-
-                    return true;
                 }
-                return result;
+
+                // Only drop what no chest took, or the part already deposited is duplicated.
+                stack = comp.m_itemData.m_stack;
+                return true;
             }
-
-
-            return true;
+            finally
+            {
+                Object.Destroy(spawnedOre);
+            }
         }
 
         private static bool SpawnWindmillOutput(Smelter smelter, string ore, ref int stack)
@@ -314,6 +337,7 @@ namespace ValheimPlus.GameClasses
             float autoFuelRange = 0f;
             bool ignorePrivateAreaCheck = false;
             bool isKiln = false;
+            bool isWindmill = false;
             if (smelter.m_name.Equals(SmelterDefinitions.KilnName))
             {
                 if (!Configuration.Current.Kiln.IsEnabled || !Configuration.Current.Kiln.autoFuel)
@@ -340,6 +364,7 @@ namespace ValheimPlus.GameClasses
             {
                 if (!Configuration.Current.Windmill.IsEnabled || !Configuration.Current.Windmill.autoFuel)
                     return;
+                isWindmill = true;
                 autoFuelRange = Configuration.Current.Windmill.autoRange;
                 ignorePrivateAreaCheck = Configuration.Current.Windmill.ignorePrivateAreaCheck;
             }
@@ -388,79 +413,122 @@ namespace ValheimPlus.GameClasses
 
             int toMaxOre = smelter.m_maxOre - smelter.GetQueueSize();
             int toMaxFuel = smelter.m_maxFuel - (int)Math.Ceiling(smelter.GetFuel());
+            bool needsFuel = smelter.m_fuelItem && toMaxFuel > 0;
 
-            if (smelter.m_fuelItem && toMaxFuel > 0)
+            if (!needsFuel && toMaxOre <= 0) return;
+
+            var nearbyChests =
+                InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, autoFuelRange,
+                    !ignorePrivateAreaCheck);
+
+            if (needsFuel)
             {
-                ItemDrop.ItemData fuelItemData = smelter.m_fuelItem.m_itemData;
+                var fuelItemData = smelter.m_fuelItem.m_itemData;
 
                 // Check for fuel in nearby containers
-                int addedFuel = InventoryAssistant.RemoveItemInAmountFromChests(
-                    InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, autoFuelRange, !ignorePrivateAreaCheck),
-                    fuelItemData, toMaxFuel);
+                int addedFuel = InventoryAssistant.RemoveItemInAmountFromChests(nearbyChests, fuelItemData, toMaxFuel);
                 for (int i = 0; i < addedFuel; i++)
                 {
-                    smelter.m_nview.InvokeRPC("RPC_AddFuel", new object[] { });
+                    smelter.m_nview.InvokeRPC("RPC_AddFuel");
                 }
+
                 if (addedFuel > 0)
-                    ValheimPlusPlugin.Logger.LogDebug("Added " + addedFuel + " fuel(" + fuelItemData.m_shared.m_name + ") in " + smelter.m_name);
+                    ValheimPlusPlugin.Logger.LogDebug("Added " + addedFuel + " fuel(" + fuelItemData.m_shared.m_name +
+                                                      ") in " + smelter.m_name);
             }
-            if (toMaxOre > 0)
+
+            if (toMaxOre <= 0) return;
+
+            var conversions = GetAutoFuelConversions(smelter, isKiln, isWindmill, nearbyChests);
+            if (conversions == null) return;
+
+            var oreSources = nearbyChests.SelectMany(chest => conversions,
+                (chest, conversion) => (Chest: chest, Conversion: conversion));
+            if (isWindmill)
             {
-                List<Container> nearbyChests = InventoryAssistant.GetNearbyChestsForMachine(smelter.gameObject, autoFuelRange, !ignorePrivateAreaCheck);
-                var oreSources = nearbyChests.SelectMany(chest => smelter.m_conversion,
-                    (chest, conversion) => (Chest: chest, Conversion: conversion));
-                if (smelter.m_name == SmelterDefinitions.WindmillName)
-                {
-                    // Finish intermediate products (Oat -> OatFlour) before starting more
-                    // raw inputs (OatSeeds -> Oat), even when they are in a farther chest.
-                    oreSources = oreSources.OrderByDescending(source =>
-                        smelter.m_conversion.Any(conversion => conversion.m_to == source.Conversion.m_from));
-                }
-
-                foreach (var source in oreSources)
-                {
-                    Container c = source.Chest;
-                    Smelter.ItemConversion itemConversion = source.Conversion;
-                    if (isKiln)
-                    {
-                        if (Configuration.Current.Kiln.dontProcessFineWood && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.FineWoodName)) continue;
-                        if (Configuration.Current.Kiln.dontProcessRoundLog && itemConversion.m_from.m_itemData.m_shared.m_name.Equals(WoodDefinitions.RoundLogName)) continue;
-
-                        int threshold = Configuration.Current.Kiln.stopAutoFuelThreshold < 0 ? 0 : Configuration.Current.Kiln.stopAutoFuelThreshold;
-                        if (threshold > 0 && InventoryAssistant.GetItemAmountInItemList(InventoryAssistant.GetNearbyChestItemsByContainerList(nearbyChests), itemConversion.m_to.m_itemData) >= threshold) return;
-                    }
-
-                    ItemDrop.ItemData oreItem = itemConversion.m_from.m_itemData;
-
-                    bool oreCheated;
-                    int addedOres;
-                    if (smelter.m_name == SmelterDefinitions.WindmillName && WindmillOats.StopAtOat && WindmillOats.IsOat(oreItem))
-                    {
-                        addedOres = WindmillOats.RemoveProcessableOats(c, toMaxOre, out oreCheated);
-                    }
-                    else
-                    {
-                        // Read the flag before removal so cheated input remains cheated.
-                        oreCheated = c.GetInventory().GetAllItems()
-                            .Any(i => i.m_shared.m_name == oreItem.m_shared.m_name && i.m_cheated);
-                        addedOres = InventoryAssistant.RemoveItemFromChest(c, oreItem, toMaxOre);
-                    }
-                    if (addedOres > 0)
-                    {
-                        GameObject orePrefab = ObjectDB.instance.GetItemPrefab(itemConversion.m_from.gameObject.name);
-
-                        for (int i = 0; i < addedOres; i++)
-                        {
-                            smelter.m_nview.InvokeRPC("RPC_AddOre", new object[] { orePrefab.name, oreCheated });
-                        }
-                        toMaxOre -= addedOres;
-                        if (addedOres > 0)
-                            ValheimPlusPlugin.Logger.LogDebug("Added " + addedOres + " ores(" + oreItem.m_shared.m_name + ") in " + smelter.m_name);
-                        if (toMaxOre == 0)
-                            return;
-                    }
-                }
+                // Finish intermediate products (Oat -> OatFlour) before starting more
+                // raw inputs (OatSeeds -> Oat), even when they are in a farther chest.
+                oreSources = oreSources.OrderByDescending(source =>
+                    smelter.m_conversion.Any(conversion => conversion.m_to == source.Conversion.m_from));
             }
+
+            foreach (var source in oreSources)
+            {
+                Container container = source.Chest;
+                Smelter.ItemConversion conversion = source.Conversion;
+                ItemDrop.ItemData oreItem = conversion.m_from.m_itemData;
+
+                bool oreCheated;
+                int addedOres;
+                if (isWindmill && WindmillOats.StopAtOat && WindmillOats.IsOat(oreItem))
+                {
+                    addedOres = WindmillOats.RemoveProcessableOats(container, toMaxOre, out oreCheated);
+                }
+                else
+                {
+                    // Read the flag before removal so cheated input remains cheated.
+                    oreCheated = container.GetInventory().GetAllItems()
+                        .Any(i => i.m_shared.m_name == oreItem.m_shared.m_name && i.m_cheated);
+                    addedOres = InventoryAssistant.RemoveItemFromChest(container, oreItem, toMaxOre);
+                }
+                if (addedOres <= 0) continue;
+
+                var orePrefab = ObjectDB.instance.GetItemPrefab(conversion.m_from.gameObject.name);
+                for (int i = 0; i < addedOres; i++)
+                {
+                    smelter.m_nview.InvokeRPC("RPC_AddOre", orePrefab.name, oreCheated);
+                }
+
+                toMaxOre -= addedOres;
+                ValheimPlusPlugin.Logger.LogDebug("Added " + addedOres + " ores(" +
+                                                  oreItem.m_shared.m_name + ") in " + smelter.m_name);
+                if (toMaxOre == 0) return;
+            }
+        }
+
+        /// <summary>
+        /// Conversions auto-fuel may pull this tick, or null when the Kiln's coal threshold stops it entirely.
+        /// Worked out once per tick, since the chest totals don't change while pulling input.
+        /// </summary>
+        private static List<Smelter.ItemConversion> GetAutoFuelConversions(Smelter smelter, bool isKiln,
+            bool isWindmill, List<Container> nearbyChests)
+        {
+
+            // Only gathered when a threshold needs it.
+            List<ItemDrop.ItemData> chestItems = null;
+
+            int AmountInChests(ItemDrop.ItemData item)
+            {
+                chestItems ??= InventoryAssistant.GetNearbyChestItemsByContainerList(nearbyChests);
+                return InventoryAssistant.GetItemAmountInItemList(chestItems, item);
+            }
+
+            var conversions = new List<Smelter.ItemConversion>();
+            foreach (Smelter.ItemConversion conversion in smelter.m_conversion)
+            {
+                var fromName = conversion.m_from.m_itemData.m_shared.m_name;
+                var toData = conversion.m_to.m_itemData;
+                if (isKiln)
+                {
+                    var kilnConfig = Configuration.Current.Kiln;
+                    if (kilnConfig.dontProcessFineWood && fromName.Equals(WoodDefinitions.FineWoodName)) continue;
+                    if (kilnConfig.dontProcessRoundLog && fromName.Equals(WoodDefinitions.RoundLogName)) continue;
+
+                    int threshold = kilnConfig.stopAutoFuelThreshold;
+                    if (threshold > 0 && AmountInChests(toData) >= threshold) return null;
+                }
+
+                if (isWindmill)
+                {
+                    var windmillConfig = Configuration.Current.Windmill;
+                    int threshold = windmillConfig.stopAutoFuelOatThreshold;
+                    if (threshold > 0 && fromName.Equals(WindmillDefinitions.OatName) &&
+                        AmountInChests(toData) >= threshold) continue;
+                }
+                conversions.Add(conversion);
+            }
+
+            return conversions;
         }
     }
 
@@ -591,5 +659,10 @@ namespace ValheimPlus.GameClasses
     {
         public static readonly string FineWoodName = "$item_finewood";
         public static readonly string RoundLogName = "$item_roundlog";
+    }
+
+    public static class WindmillDefinitions
+    {
+        public static readonly string OatName = "$item_oat";
     }
 }
