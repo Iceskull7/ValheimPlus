@@ -5,11 +5,11 @@ using ValheimPlus;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ValheimPlus")]
+[assembly: AssemblyTitle(ValheimPlusPlugin.ValheimPlusName)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ValheimPlus")]
+[assembly: AssemblyCompany("Iceskull")]
+[assembly: AssemblyProduct(ValheimPlusPlugin.ValheimPlusName)]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

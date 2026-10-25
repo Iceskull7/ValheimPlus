@@ -90,7 +90,7 @@ namespace ValheimPlus.Configurations
         /// </summary>
         private static void SetUpServerSync()
         {
-            ConfigSyncGlue.Initialize(ValheimPlusPlugin.ValheimPlusGuid, "Valheim Plus",
+            ConfigSyncGlue.Initialize(ValheimPlusPlugin.ValheimPlusGuid, ValheimPlusPlugin.ValheimPlusName,
                 ValheimPlusPlugin.NumericVersion, ValheimPlusPlugin.MinRequiredNumericVersion);
 
             // Only the return to our own values. The other direction is handled in ConfigApplied.

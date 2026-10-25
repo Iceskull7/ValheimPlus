@@ -1,4 +1,6 @@
-> **Iceskull temporary fork:** This fork incorporates the gameplay updates from Grantapher ValheimPlus 10.4.0.0 while retaining its existing configuration names and custom behavior. Armor mould settings remain under `[Moulds]`, Gathering keeps `frostwood` and `goldOre`, windmills retain `oatProcessing` and protected oat stacks, and container resizing preserves occupied slots. Existing seed modifiers are carried over automatically when the new `[Pickable] seeds` setting is absent. Fork releases retain their own version sequence and packaging.
+> **ValheimPlus 1.3.1 (Iceskull Temporary):** This fork incorporates the gameplay updates from [Grantapher ValheimPlus](https://github.com/Grantapher/ValheimPlus) 10.4.0.0 while retaining its existing configuration names and custom behavior. Armor mould settings remain under `[Moulds]`, Gathering keeps `frostwood` and `goldOre`, windmills retain `oatProcessing` and protected oat stacks, and container resizing preserves occupied slots. Existing seed modifiers are carried over automatically when the new `[Pickable] seeds` setting is absent.
+
+Starting with `1.3.1`, the plugin, GitHub release, and Thunderstore package use the same `Major.Minor.Patch` version. Compatible fixes increment Patch, new features increment Minor, and breaking changes increment Major. Download the fork from [GitHub releases](https://github.com/Iceskull7/ValheimPlus/releases/latest) or [Iceskull's Thunderstore package](https://thunderstore.io/c/valheim/p/Iceskull/ValheimPlus_Temporary/).
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/grantapher/ValheimPlus/main/logo.png" alt="ValheimPlus Logo"/>
@@ -25,7 +27,7 @@ A HarmonyX Mod aimed at improving the gameplay quality of Valheim. The mod inclu
 - Modify auto-pickup range.
 - Modify unarmed damage.
 - Modify each skill's experience gain separately by percent.
-- Remove screen shakes.
+- Disable all native camera shake sources with `[Player] disableCameraShake`.
 - Tweak/disable death penalty.
 - Modify fall damage by percent, and cap the maximum fall damage taken.
 - Tweak Rested bonus duration per comfort level.
@@ -401,7 +403,7 @@ _These are the `Kiln`, `Smelter` and `Furnace` config sections respectively._
 Both the game and the server should have this mod installed to prevent all kinds of different issues.
 If you have the mod installed and then have friends join over steam they should have the mod as well.
 
-Installation instructions for every supported variant — mod manager, manual, client and dedicated server, on Windows and Unix — can be found in [INSTALL.md](https://github.com/Grantapher/ValheimPlus/blob/main/INSTALL.md).
+Installation instructions for every supported variant — mod manager, manual, client and dedicated server, on Windows and Unix — can be found in [INSTALL.md](https://github.com/Iceskull7/ValheimPlus/blob/main/INSTALL.md).
 
 **Please read the section about Server Config & Version Control (About Version Enforcement) below.**
 
@@ -409,9 +411,9 @@ Installation instructions for every supported variant — mod manager, manual, c
 
 Game updates are unlikely to do more than partially break specific features of ValheimPlus at worst.
 In case you encounter any issues, use Steam's verify integrity feature and wait for it to download/update all files.
-This should resolve any issues related. If you continue to have issues, contact the help channel in [our discord server](https://discord.gg/WU69A2JTcn).
+This should resolve any issues related. If you continue to have issues with this fork, report them in [Iceskull's issue tracker](https://github.com/Iceskull7/ValheimPlus/issues).
 
-For which mod versions work with which game versions, see [COMPATIBILITY.md](https://github.com/Grantapher/ValheimPlus/blob/main/COMPATIBILITY.md).
+For which mod versions work with which game versions, see [COMPATIBILITY.md](https://github.com/Iceskull7/ValheimPlus/blob/main/COMPATIBILITY.md).
 
 # Server Config & Version Control (About Version Enforcement)
 
@@ -436,15 +438,15 @@ Only the server configuration file (located in the server files) needs to be set
 
 When hosting for other players over steam, every player will need v+ and they will receive the local settings from the host's game folder.
 
-# Join the Discord
+# Upstream Community
 
-We have several different channels including a showcase channel and alpha testing system, allowing players to always get the newest versions available to test out. Click the logo below to join.
+The upstream ValheimPlus community has discussion and showcase channels. Click the logo below to join its Discord; releases and support for this fork are available through the Iceskull GitHub repository linked above.
 
 [![ValheimPlus Icon](https://raw.githubusercontent.com/grantapher/ValheimPlus/main/ico.png)](https://discord.gg/WU69A2JTcn)
 
 # Contributing to ValheimPlus
 
-Please see [CONTRIBUTING.md](https://github.com/Grantapher/ValheimPlus/blob/main/CONTRIBUTING.md) for details on compiling V+ for development and contributing to the project.
+Please see [CONTRIBUTING.md](https://github.com/Iceskull7/ValheimPlus/blob/main/CONTRIBUTING.md) for details on compiling V+ for development and contributing to the project.
 
 # Credits
 

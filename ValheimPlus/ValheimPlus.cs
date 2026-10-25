@@ -25,11 +25,12 @@ namespace ValheimPlus
     public class ValheimPlusPlugin : BaseUnityPlugin
     {
         internal const string ValheimPlusGuid = "org.bepinex.plugins.valheim_plus";
-        private const string ValheimPlusName = "Valheim Plus";
+        internal const string ForkName = "Iceskull Temporary";
+        internal const string ValheimPlusName = "Valheim Plus (" + ForkName + ")";
 
         // Version used when numeric is required (assembly info, System.Version parsing).
-        // This fork retains its existing numeric version sequence.
-        public const string NumericVersion = "0.10.3.6";
+        // Keep Major.Minor.Patch aligned with the fork's release and Thunderstore package.
+        public const string NumericVersion = "1.3.1";
 
         // Extra version, like alpha/beta/rc/stable. Can leave blank if a stable release.
         // Must start with `-` or be blank.
@@ -37,6 +38,8 @@ namespace ValheimPlus
 
         // Version used when numeric is NOT required (bepinex, Logging, config file lookup)
         public const string FullVersion = NumericVersion + VersionExtra;
+
+        internal const string DisplayVersion = "ValheimPlus " + FullVersion + " (" + ForkName + ")";
 
         // Minimum required version for full compatibility.
         internal const string MinRequiredNumericVersion = NumericVersion;
@@ -226,7 +229,7 @@ namespace ValheimPlus
                         "If you are using the PTB, you likely need to use the non-beta version of the game. " +
                         "Otherwise, the errors seen above likely will require the Valheim Plus mod to be updated. " +
                         "If a game update just came out for Valheim, this may take some time for the mod to be updated. " +
-                        "See https://github.com/Grantapher/ValheimPlus/blob/grantapher-development/COMPATIBILITY.md " +
+                        "See https://github.com/Iceskull7/ValheimPlus/blob/main/COMPATIBILITY.md " +
                         "for what game versions are compatible with what mod versions.");
                 }
                 else
@@ -235,8 +238,8 @@ namespace ValheimPlus
                         $"Valheim Plus failed to apply patches. " +
                         $"Please ensure the game version ({Version.GetVersionString()}) is compatible with " +
                         $"the Valheim Plus version ({FullVersion}) at " +
-                        "https://github.com/Grantapher/ValheimPlus/blob/grantapher-development/COMPATIBILITY.md. " +
-                        "If it already is, please report a bug at https://github.com/Grantapher/ValheimPlus/issues.");
+                        "https://github.com/Iceskull7/ValheimPlus/blob/main/COMPATIBILITY.md. " +
+                        "If it already is, please report a bug at https://github.com/Iceskull7/ValheimPlus/issues.");
                 }
 
                 // rethrow, otherwise it may not be obvious to the user that patching failed
@@ -250,7 +253,7 @@ namespace ValheimPlus
                 $"This version of Valheim Plus ({FullVersion}) expects a minimum game version of " +
                 $"\"{MinSupportedGameVersion}\", but this game version is older at \"{Version.CurrentVersion}\". " +
                 "Please either update the Valheim game, or use an older version of Valheim Plus as per " +
-                "https://github.com/Grantapher/ValheimPlus/blob/grantapher-development/COMPATIBILITY.md.");
+                "https://github.com/Iceskull7/ValheimPlus/blob/main/COMPATIBILITY.md.");
         }
 
         public static void UnpatchSelf()

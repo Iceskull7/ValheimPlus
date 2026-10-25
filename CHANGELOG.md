@@ -1,12 +1,19 @@
 # Changelog
 
-Notable changes to ValheimPlus, newest first. Each entry mirrors the patch notes
-from its [GitHub release](https://github.com/Grantapher/ValheimPlus/releases).
+Notable changes to the Iceskull Temporary fork and its upstream history. Fork patch notes
+are published with the [Iceskull GitHub releases](https://github.com/Iceskull7/ValheimPlus/releases).
+Historical upstream entries retain their original version numbers and notes.
 
 Releases before `0.10.0.0` targeted Valheim versions that are no longer
-compatible; see the [release archive](https://github.com/Grantapher/ValheimPlus/releases)
+compatible; see the [upstream release archive](https://github.com/Grantapher/ValheimPlus/releases)
 for those notes.
 
+
+## 1.3.1 - Camera shake fix and unified fork versioning
+
+* Apply `[Player] disableCameraShake` at the central camera-shake entry point so it suppresses all native shake sources. The game's normal camera shake is preserved when the option or section is disabled.
+* Use `1.3.1` for the plugin, GitHub release, and Thunderstore package, with consistent Iceskull Temporary branding in menus, logs, and version information.
+* Continue the Thunderstore version sequence after `1.3.0`, which bundled plugin `0.10.3.6`. The existing plugin GUID and configuration file remain unchanged.
 
 ## 0.10.3.6 - Upstream updates with fork configuration compatibility
 

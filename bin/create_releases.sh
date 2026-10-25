@@ -15,13 +15,13 @@ BEPINEXPACK_VALHEIM_TEMP_DIR="$TEMP_DIR/denikson-BepInExPack_Valheim"
 BEPINEXPACK_VALHEIM_DOWNLOAD_URL="https://gcdn.thunderstore.io/live/repository/packages/denikson-BepInExPack_Valheim-$BEPINEXPACK_VALHEIM_VERSION.zip"
 PLUGINS_DIR="$BEPINEXPACK_VALHEIM_TEMP_DIR/BepInExPack_Valheim/BepInEx/plugins"
 VALHEIM_PLUS_DLL_DESTINATION="$PLUGINS_DIR/ValheimPlus.dll"
-VALHEIM_PLUS_DLL_DESTINATION_RENAMED="$PLUGINS_DIR/ValheimPlusGrantapher.dll"
+VALHEIM_PLUS_DLL_DESTINATION_RENAMED="$PLUGINS_DIR/ValheimPlusIceskull.dll"
 YELLOW='\033[0;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Prompt with version info
-echo "This will build release files for ValheimPlus with the following options":
+echo "This will build release files for ValheimPlus (Iceskull Temporary) with the following options":
 echo -e "${YELLOW}Valheim Plus version        = $VERSION"
 echo -e "BepInExPack_Valheim version = $BEPINEXPACK_VALHEIM_VERSION${NC}"
 
@@ -133,10 +133,10 @@ cp "$VALHEIM_PLUS_DLL" "$THUNDERSTORE_PLUGINS"
 
 cat <<EOF > "$THUNDERSTORE/manifest.json"
 {
-    "name": "ValheimPlus_Grantapher_Temporary",
-    "version_number": "$(echo "$VERSION" | cut -d'.' -f2-)",
-    "website_url": "https://discord.gg/WU69A2JTcn",
-    "description": "A (not so) temporary Valheim Plus fork. Provides many configurable game tweaks.",
+    "name": "ValheimPlus_Temporary",
+    "version_number": "$VERSION",
+    "website_url": "https://github.com/Iceskull7/ValheimPlus",
+    "description": "Iceskull's temporary ValheimPlus fork with configurable gameplay improvements.",
     "dependencies": [
         "denikson-BepInExPack_Valheim-$BEPINEXPACK_VALHEIM_VERSION"
     ]

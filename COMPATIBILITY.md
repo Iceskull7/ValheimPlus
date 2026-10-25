@@ -1,5 +1,7 @@
 # Compatibility
 
+The current Iceskull Temporary fork is `1.3.1`, available from [GitHub releases](https://github.com/Iceskull7/ValheimPlus/releases/latest) and [Thunderstore](https://thunderstore.io/c/valheim/p/Iceskull/ValheimPlus_Temporary/). Older entries below retain the compatibility history of previous fork and upstream releases.
+
 ## Game File Compatibility
 
 Assume any combinations not listed do not work. Valheim game versions that are the same but on different platforms -
@@ -9,6 +11,7 @@ sometimes have minor differences that require extra effort to offer compatibilit
 Note that alpha versions, while being compatible, have a higher likelihood of having bugs.
 
 ## Valheim 1.0
+* ✅ - `Valheim 1.0.20 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `ValheimPlus 1.3.1 (Iceskull Temporary)`
 * ✅ - `Valheim 1.0.20 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `Iceskull ValheimPlus 0.10.3.6`
 * ✅ - `Valheim 1.0.20 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `ValheimPlus 10.4.0.0`
 * ✅ - `Valheim 1.0.20 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `ValheimPlus 0.10.3.0`
