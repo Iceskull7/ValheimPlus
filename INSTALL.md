@@ -35,7 +35,7 @@ The published fork archives use `ValheimPlus.dll`. Remove other ValheimPlus DLLs
 If you are running the game on Unix, your installation comes with two extra files compared to its Windows counterparts. For details on the additional steps you need to take, search for the text "`Configuration (Linux`" on the [BepInExPack_Valheim page](https://valheim.thunderstore.io/package/denikson/BepInExPack_Valheim/).
 
 ### General Instructions
-1. Download the appropriate archive from [the latest Iceskull GitHub release](https://github.com/Iceskull7/ValheimPlus/releases/latest). Choose `WindowsClient.zip`, `WindowsServer.zip`, `UnixClient.zip`, or `UnixServer.zip` for a BepInEx bundle. If BepInEx is already installed, the plugin-only archive is `ValheimPlus-1.3.2.zip`.
+1. Download the appropriate archive from [the latest Iceskull GitHub release](https://github.com/Iceskull7/ValheimPlus/releases/latest). Choose `WindowsClient.zip`, `WindowsServer.zip`, `UnixClient.zip`, or `UnixServer.zip` for a BepInEx bundle. If BepInExPack_Valheim `5.4.2360` is already installed, the plugin-only archive is `ValheimPlus-1.3.3.zip`.
 2. Locate your game folder manually or start your Steam client and right-click the Valheim game. You can then right click the game in your library and select `Manage -> browse local files` for Steam to open your game folder.
 
     ![Browse Local Files Image](./resources/images/nav_steam_local_files.png)
@@ -52,14 +52,14 @@ The title screen and logs will *mostly* verify that the mod is working before yo
 
 In the current mod release, you should have the following versions:
 * Valheim version `1.0.21 (n-41)`
-* BepInEx version `5.4.23.5`
-  * `BepInExPack_Valheim` version `5.4.2351`
+* BepInEx version `5.4.23.6`
+  * `BepInExPack_Valheim` version `5.4.2360`, including UnityDoorstop `4.6.0`
     * This can be verified via logs only.
     * The four platform bundles on GitHub include this version; the plugin-only archive requires an existing BepInEx installation.
     * Thunderstore supports having this dependency and installing it for you via a mod manager.
-* ValheimPlus version `1.3.2`
-  * The title screen displays `ValheimPlus 1.3.2 (Iceskull Temporary)`.
-  * The plugin, GitHub release, and `Iceskull-ValheimPlus_Temporary` Thunderstore package all use `1.3.2`.
+* ValheimPlus version `1.3.3`
+  * The title screen displays `ValheimPlus 1.3.3 (Iceskull Temporary)`.
+  * The plugin, GitHub release, and `Iceskull-ValheimPlus_Temporary` Thunderstore package all use `1.3.3`.
 
 For more info on compatibility of various V+ and Valheim versions, check out [COMPATIBILITY.md](COMPATIBILITY.md).
 

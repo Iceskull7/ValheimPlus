@@ -1,4 +1,4 @@
-> **ValheimPlus 1.3.2 (Iceskull Temporary):** Compatibility verified with **Valheim 1.0.21** through automated runtime tests and game-code compatibility checks. This release preserves the existing gameplay behavior and configuration settings.
+> **ValheimPlus 1.3.3 (Iceskull Temporary):** Compatibility verified with **Valheim 1.0.21** and **BepInExPack_Valheim 5.4.2360** through automated Linux dedicated-server tests and loader compatibility checks. GitHub bundles and the Thunderstore dependency use the updated BepInEx package. Existing gameplay behavior and configuration settings are preserved.
 
 This fork incorporates the gameplay updates from [Grantapher ValheimPlus](https://github.com/Grantapher/ValheimPlus) 10.4.0.0 while retaining its existing configuration names and custom behavior. Armor mould settings remain under `[Moulds]`, Gathering keeps `frostwood` and `goldOre`, windmills retain `oatProcessing` and protected oat stacks, and container resizing preserves occupied slots. Existing seed modifiers are carried over automatically when the new `[Pickable] seeds` setting is absent.
 

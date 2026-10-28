@@ -9,6 +9,12 @@ compatible; see the [upstream release archive](https://github.com/Grantapher/Val
 for those notes.
 
 
+## 1.3.3 - BepInEx 5.4.2360 compatibility
+
+* Update the four GitHub platform bundles and Thunderstore dependency to `BepInExPack_Valheim 5.4.2360`, containing BepInEx `5.4.23.6` and UnityDoorstop `4.6.0`.
+* Verify plugin loading, Harmony patch registration, configuration handling, and existing features on a Valheim 1.0.21 Linux dedicated server with the updated loader.
+* Update the plugin, menu display, release, and Thunderstore package to `1.3.3`. Existing gameplay behavior and configuration keys are preserved.
+
 ## 1.3.2 - Valheim 1.0.21 compatibility
 
 * Verify the existing functionality against Valheim 1.0.21 through automated runtime tests and game-code compatibility checks.

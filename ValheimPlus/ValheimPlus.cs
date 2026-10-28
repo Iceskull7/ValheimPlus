@@ -30,7 +30,7 @@ namespace ValheimPlus
 
         // Version used when numeric is required (assembly info, System.Version parsing).
         // Keep Major.Minor.Patch aligned with the fork's release and Thunderstore package.
-        public const string NumericVersion = "1.3.2";
+        public const string NumericVersion = "1.3.3";
 
         // Extra version, like alpha/beta/rc/stable. Can leave blank if a stable release.
         // Must start with `-` or be blank.
