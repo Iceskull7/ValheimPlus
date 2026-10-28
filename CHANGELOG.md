@@ -9,6 +9,14 @@ compatible; see the [upstream release archive](https://github.com/Grantapher/Val
 for those notes.
 
 
+## 1.3.4 - Workbench spawn prevention radius fix
+
+* Apply `workbenchEnemySpawnRange` to the station's actual PlayerBase collider, supporting both capsule and sphere shapes. Current workbenches no longer retain the vanilla 20-metre radius after initialization.
+* Preserve the configured spawn prevention radius after native station range and upgrade calculations instead of allowing the building range to overwrite it.
+* Keep `0` equivalent to the configured `workbenchRange`. Station upgrades still increase the building range, while the spawn prevention radius stays at its configured value.
+* Initialize spawn prevention independently of the visual range marker. Existing configuration keys and defaults remain unchanged.
+* Validate the fix and existing features with Valheim 1.0.21 and BepInExPack Valheim 5.4.2360. Use `1.3.4` for the plugin, menu display, GitHub release and Thunderstore package.
+
 ## 1.3.3 - BepInEx 5.4.2360 compatibility
 
 * Update the four GitHub platform bundles and Thunderstore dependency to `BepInExPack_Valheim 5.4.2360`, containing BepInEx `5.4.23.6` and UnityDoorstop `4.6.0`.

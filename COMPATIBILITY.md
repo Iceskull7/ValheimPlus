@@ -1,8 +1,8 @@
 # Compatibility
 
-The current Iceskull Temporary fork is `1.3.3`, verified with Valheim `1.0.21` and `BepInExPack_Valheim 5.4.2360` (BepInEx `5.4.23.6`, UnityDoorstop `4.6.0`) and available from [GitHub releases](https://github.com/Iceskull7/ValheimPlus/releases/latest) and [Thunderstore](https://thunderstore.io/c/valheim/p/Iceskull/ValheimPlus_Temporary/). Older entries below retain the compatibility history of previous fork and upstream releases.
+The current Iceskull Temporary fork is `1.3.4`, verified with Valheim `1.0.21` and `BepInExPack_Valheim 5.4.2360` (BepInEx `5.4.23.6`, UnityDoorstop `4.6.0`) and available from [GitHub releases](https://github.com/Iceskull7/ValheimPlus/releases/latest) and [Thunderstore](https://thunderstore.io/c/valheim/p/Iceskull/ValheimPlus_Temporary/). Older entries below retain the compatibility history of previous fork and upstream releases.
 
-Verification includes automated runtime tests on the Linux dedicated server, registration of all mod patches with enabled configuration sections, and checks of the updated loader's APIs and bundled files. Existing gameplay behavior and configuration keys are preserved. Windows and macOS loader binaries are included from the official BepInEx package; native client sessions on those platforms and arbitrary third-party mod combinations were not tested.
+Verification includes automated runtime tests on the Linux dedicated server and registration of all mod patches with enabled configuration sections. Workbench checks cover native colliders, spawn suppression queries, initialization, repeated range updates and station upgrades. Existing configuration keys are preserved. Windows and macOS loader binaries are included from the official BepInEx package; native client sessions, multiplayer ownership handoffs and arbitrary third-party mod combinations were not tested.
 
 ## Game File Compatibility
 
@@ -13,6 +13,7 @@ sometimes have minor differences that require extra effort to offer compatibilit
 Note that alpha versions, while being compatible, have a higher likelihood of having bugs.
 
 ## Valheim 1.0
+* ✅ - `Valheim 1.0.21 (n-41)` + `BepInExPack_Valheim 5.4.2360` + `ValheimPlus 1.3.4 (Iceskull Temporary)`
 * ✅ - `Valheim 1.0.21 (n-41)` + `BepInExPack_Valheim 5.4.2360` + `ValheimPlus 1.3.3 (Iceskull Temporary)`
 * ✅ - `Valheim 1.0.21 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `ValheimPlus 1.3.2 (Iceskull Temporary)`
 * ✅ - `Valheim 1.0.21 (n-41)` + `BepInExPack_Valheim 5.4.2351` + `ValheimPlus 1.3.1 (Iceskull Temporary)`
