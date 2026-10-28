@@ -9,6 +9,13 @@ compatible; see the [upstream release archive](https://github.com/Grantapher/Val
 for those notes.
 
 
+## 1.3.2 - Valheim 1.0.21 compatibility
+
+* Verify the existing functionality against Valheim 1.0.21 through automated runtime tests and game-code compatibility checks.
+* Build against Valheim 1.0.21 and update the documented compatibility and in-game version display.
+* Preserve existing gameplay behavior, configuration keys, and drop modifiers; no gameplay changes were required.
+* Confirm the documented armor mould base chances for Valheim 1.0.20 and 1.0.21.
+
 ## 1.3.1 - Camera shake fix and unified fork versioning
 
 * Apply `[Player] disableCameraShake` at the central camera-shake entry point so it suppresses all native shake sources. The game's normal camera shake is preserved when the option or section is disabled.

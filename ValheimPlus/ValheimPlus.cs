@@ -30,7 +30,7 @@ namespace ValheimPlus
 
         // Version used when numeric is required (assembly info, System.Version parsing).
         // Keep Major.Minor.Patch aligned with the fork's release and Thunderstore package.
-        public const string NumericVersion = "1.3.1";
+        public const string NumericVersion = "1.3.2";
 
         // Extra version, like alpha/beta/rc/stable. Can leave blank if a stable release.
         // Must start with `-` or be blank.
@@ -48,7 +48,7 @@ namespace ValheimPlus
         private static readonly GameVersion MinSupportedGameVersion = new(1, 0, 20);
 
         // The game version this version of V+ was compiled against.
-        private static readonly GameVersion TargetGameVersion = new(1, 0, 20);
+        private static readonly GameVersion TargetGameVersion = new(1, 0, 21);
 
         // Versions we know for sure will not work with this game version.
         // Useful if a PTB is active to exclude it from the stable release.
